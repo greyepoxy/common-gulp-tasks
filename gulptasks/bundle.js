@@ -6,15 +6,13 @@ var path = require('path');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var taskUtils = require('./taskUtils');
 
 /**
- * This function will generate three 'bundle' tasks based on the following params.
+ * This function will generate two 'bundle' tasks based on the following params.
  * First task is just 'bundle'.
- * Second is 'bundle:publish' which is used to produce minified versions.
- * Third is 'bundle:watch' which will auto 'bundle' when the sources change.
+ * Second is 'bundle:watch' which will auto 'bundle' when the sources change.
  * @param {object} gulp instance from require('gulp')
  * @param {object} config options of the form
  * {
@@ -28,7 +26,6 @@ var taskUtils = require('./taskUtils');
 exports.bundle = function(gulp, config) {
 	config = config || {};
 	var bundleTaskName = taskUtils.getValueOrDefault('bundle', config.taskName);
-	var bundleUglifyTaskName = bundleTaskName + ':publish';
 	var bundleWatchTaskName = bundleTaskName + ':watch';
 	var sourcesBaseDir = taskUtils.getValueOrDefault('./dist', config.srcBaseDir);
 	var sources = taskUtils.getValueOrDefault(['index.js'], config.srcs)
@@ -46,7 +43,7 @@ exports.bundle = function(gulp, config) {
 		return bundler;
 	};
 
-	function bundle(file, bundler, outDirectory, shouldUglify) {
+	function bundle(file, bundler, outDirectory) {
 		var fileName = path.basename(file.path);
 		
 		return bundler
@@ -58,14 +55,11 @@ exports.bundle = function(gulp, config) {
 			.pipe(source(fileName))
 			.pipe(buffer())
 			.pipe(sourcemaps.init({ loadMaps: true }))
-			.pipe(shouldUglify ? uglify() : gutil.noop())
-				.on('error', gutil.log)
-			.pipe(shouldUglify ? rename({ suffix: '.min' }) : gutil.noop())
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(outDirectory));
 	};
 
-	function bundleTask(sources, sourcesBaseDir, outDir, isPublishVer){
+	function bundleTask(sources, sourcesBaseDir, outDir, isPublishVer) {
 		return gulp.src(sources, { base: sourcesBaseDir })
 			.pipe(forEach(function (stream, file) {
 				var bundler = getBundler(file);
@@ -75,11 +69,7 @@ exports.bundle = function(gulp, config) {
 	}
 
 	gulp.task(bundleTaskName, function () {
-		return bundleTask(sources, sourcesBaseDir, outDir, false /* shouldUglify */)
-	});
-
-	gulp.task(bundleUglifyTaskName, function () {
-		return bundleTask(sources, sourcesBaseDir, outDir, true /* shouldUglify */)
+		return bundleTask(sources, sourcesBaseDir, outDir)
 	});
 
 	gulp.task(bundleWatchTaskName, function () {
@@ -90,7 +80,7 @@ exports.bundle = function(gulp, config) {
 				function rebundle() {
 					gutil.log('Updated', file.path);
 
-					return bundle(file, bundler, outDir, false /* outputMinJs */);
+					return bundle(file, bundler, outDir);
 				}
 
 				bundler.on("update", rebundle);
