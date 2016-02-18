@@ -7,3 +7,13 @@
 exports.getValueOrDefault = function(defaultValue, value) {
 	return typeof defaultValue == typeof value ? value : defaultValue;
 }
+
+var nextBrowserSyncPort = 3000;
+/**
+ * Gets the next available port number to use with browser sync.
+ */
+exports.getNextBrowserSyncPort = function() {
+	var port = nextBrowserSyncPort;
+	nextBrowserSyncPort += 1;
+	return port;
+}

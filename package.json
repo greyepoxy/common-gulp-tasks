@@ -17,17 +17,20 @@
     "url": "https://github.com/greyepoxy/common-gulp-tasks.git"
   },
   "dependencies": {
+    "browser-sync": "^2.11.1",
     "browserify": "^13.0.0",
     "gulp-foreach": "^0.1.0",
+    "gulp-html-replace": "^1.5.5",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-typescript": "^2.11.0",
     "gulp-util": "^3.0.7",
+    "jasmine-core": "^2.4.1",
+    "merge2": "^1.0.1",
     "path": "^0.12.7",
     "require-dir": "^0.3.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0",
-	"gulp-typescript": "^2.11.0",
-    "merge2": "^1.0.1"
+    "watchify": "^3.7.0"
   }
 }

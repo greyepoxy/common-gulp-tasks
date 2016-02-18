@@ -19,8 +19,8 @@ var taskUtils = require('./taskUtils');
  *   taskName?: "name", //default value is bundle
  *   browserifyTransforms?: [{ transform:babelify, configParams:{ presets: ["es2015"] } }], //default value is []
  *   srcBaseDir?: "./dir", //default value is './dist'
- *   srcs?: [index.js], //relative from srcBaseDir, default value is ['index.js']
- *   outDir?: "./outDir", //default value is './dist/bundles'
+ *   srcs?: [index.js], //relative from srcBaseDir, default value is ['index.js','specs/tests.js']
+ *   outDir?: "./outDir", //default value is './dist/_bundles'
  * }
  */
 exports.bundle = function(gulp, config) {
@@ -28,9 +28,9 @@ exports.bundle = function(gulp, config) {
 	var bundleTaskName = taskUtils.getValueOrDefault('bundle', config.taskName);
 	var bundleWatchTaskName = bundleTaskName + ':watch';
 	var sourcesBaseDir = taskUtils.getValueOrDefault('./dist', config.srcBaseDir);
-	var sources = taskUtils.getValueOrDefault(['index.js'], config.srcs)
+	var sources = taskUtils.getValueOrDefault(['index.js','specs/tests.js'], config.srcs)
 		.map(function(value){ return path.join(sourcesBaseDir, value); });
-	var outDir = taskUtils.getValueOrDefault('./dist/bundles', config.outDir);
+	var outDir = taskUtils.getValueOrDefault('./dist/_bundles', config.outDir);
 	var browserifyTransforms = taskUtils.getValueOrDefault([], config.browserifyTransforms);
 	
 	function getBundler(file) {
@@ -59,17 +59,13 @@ exports.bundle = function(gulp, config) {
 			.pipe(gulp.dest(outDirectory));
 	};
 
-	function bundleTask(sources, sourcesBaseDir, outDir, isPublishVer) {
+	gulp.task(bundleTaskName, function () {
 		return gulp.src(sources, { base: sourcesBaseDir })
 			.pipe(forEach(function (stream, file) {
 				var bundler = getBundler(file);
-				
-				bundle(file, bundler, outDir, isPublishVer);
-			}));
-	}
 
-	gulp.task(bundleTaskName, function () {
-		return bundleTask(sources, sourcesBaseDir, outDir)
+				return bundle(file, bundler, outDir);
+			}));
 	});
 
 	gulp.task(bundleWatchTaskName, function () {
