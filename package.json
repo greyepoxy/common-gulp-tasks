@@ -1,7 +1,7 @@
 {
   "name": "@greyepoxy/common-gulp-tasks",
-  "version": "1.0.0",
-  "description": "common gulp tasks that I use across my modules.",
+  "version": "1.1.0",
+  "description": "common gulp tasks that I use across my projects.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,10 +23,8 @@
     "gulp-html-replace": "^1.5.5",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-typescript": "^2.11.0",
     "gulp-util": "^3.0.7",
     "jasmine-core": "^2.4.1",
-    "merge2": "^1.0.1",
     "path": "^0.12.7",
     "require-dir": "^0.3.0",
     "vinyl-buffer": "^1.0.0",
